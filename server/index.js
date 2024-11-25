@@ -1,26 +1,34 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const path = require('path');
+const { passport } = require('./controllers/authController');
+const session = require('express-session');
 const authRoutes = require('./routes/auth');
 const dataRoutes = require('./routes/data');
-dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
 
-// MIDDLEWARE
+// Middleware
 app.use(bodyParser.json());
-
-//ROUTES
-//route for server frontend
-app.use(express.static("../public"));
-
-//routes for login and data
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static("./public"));
 app.use('/auth', authRoutes);
 app.use('/data', dataRoutes);
+// Routes
+app.get('/dashboard', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.send(`Welcome ${req.user.username}`);
+    } else {
+        res.status(403).send('Access denied');
+    }
+});
 
-// START
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Start Server
+app.listen(3000, () => {
+    console.log('Server running on http://localhost:3000');
 });

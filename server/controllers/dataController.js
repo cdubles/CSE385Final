@@ -1,4 +1,4 @@
-const pool = require('./db.js');
+const pool = require('../config/db.js');
 
 const getDriverStats = async (req, res) => {
     try {

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            border: none;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+        #btn-secondary {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <button  onclick="window.location.href='/signup.html'" id="btn-secondary" >Sign Up</button>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <script>
+        async function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    // Validate input
+    if (!username || !password) {
+        alert('Both username and password are required!');
+        return;
+    }
+
+    // Disable button to prevent multiple submissions
+    const loginButton = document.querySelector('button[onclick="login()"]');
+    loginButton.disabled = true;
+    loginButton.textContent = 'Logging in...';
+
+    try {
+        const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            sessionStorage.setItem('token', data.token);
+            alert('Login successful!');
+            window.location.href = '/index.html';
+        } else {
+            const error = await response.json();
+            alert(`Login failed: ${error.message || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        alert('An error occurred during login. Please try again later.');
+    } finally {
+        // Re-enable button
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+    }
+}
+
+    </script>
+</body>
+</html>
