@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { passport } = require('./controllers/authController');
 const session = require('express-session');
-const authRoutes = require('./routes/auth');
 const dataRoutes = require('./routes/data');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -18,15 +18,16 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static("./public"));
 app.use('/auth', authRoutes);
-app.use('/data', dataRoutes);
+app.use('/api', dataRoutes);
 // Routes
 app.get('/dashboard', (req, res) => {
     if (req.isAuthenticated()) {
-        res.send(`Welcome ${req.user.username}`);
+        res.redirect("/index.html");
     } else {
-        res.status(403).send('Access denied');
+        res.redirect("/login.html");
     }
 });
+;
 
 // Start Server
 app.listen(3000, () => {
