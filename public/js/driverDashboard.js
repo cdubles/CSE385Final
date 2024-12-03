@@ -6,17 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const TEAM = document.getElementById('driver-team');
     const COUNTRY = document.getElementById('driver-nationality');
     const DRIVER_NAME = document.getElementById('driver-name');
+    const WINS = document.getElementById('driver-wins');
     const urlParams = new URLSearchParams(window.location.search);
     const driverId = urlParams.get('id');
 
     function populate(driver) {
         console.log(driver);
-        const name = driver.forename + ' ' + driver.surname;
+        const name = driver.driver[0].forename + ' ' + driver.driver[0].surname;
         DRIVER_NAME.textContent = name;
-        DOB.textContent = driver.dob;
-        NUMBER.textContent = driver.number;
-        CODE.textContent = driver.code;
-        COUNTRY.textContent = driver.nationality;
+        DOB.textContent = driver.driver[0].dob;
+        NUMBER.textContent = driver.driver[0].number;
+        CODE.textContent = driver.driver[0].code;
+        COUNTRY.textContent = driver.driver[0].nationality;
+        WINS.textContent = driver.wins;
         }
 
         if (driverId) {
