@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 Dashboard</title>
-    
+
     <link rel="stylesheet" href="style.css">
+    <script src="/js/home.js"></script>
 </head>
+
 <body>
+    <div id="header">
+        <h1>F1 Dashboard</h1>
+        <input type="text" id="search-bar" placeholder="Search..." oninput="handleSearch()" />
+        <div id="search-results"></div>
+    </div>
+
     <h1>F1 home</h1>
     <button onclick="window.location.href='/driverProfile.html?id=1'">id 1</button>
     <button onclick="window.location.href='/driverProfile.html?id=2'">id 2</button>
@@ -15,4 +24,5 @@
     <br>
     <button onclick="window.location.href='/teamProfile.html?id=1'">team 1</button>
 </body>
+
 </html>

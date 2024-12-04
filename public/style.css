@@ -1,0 +1,8 @@
+.search-result {
+    border: 1px solid black; /* Add a border */
+    padding: 10px;          /* Add padding */
+    margin: 5px;            /* Add some margin for spacing */
+    border-radius: 5px;     /* Rounded corners (optional) */
+    cursor: pointer;        /* Indicate it's clickable */
+  }
+  

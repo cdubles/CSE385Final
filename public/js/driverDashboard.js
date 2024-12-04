@@ -1,5 +1,5 @@
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const DOB = document.getElementById('driver-dob');
     const NUMBER = document.getElementById('driver-number');
     const CODE = document.getElementById('driver-reference');
@@ -19,23 +19,46 @@ document.addEventListener('DOMContentLoaded', function() {
         CODE.textContent = driver.driver[0].code;
         COUNTRY.textContent = driver.driver[0].nationality;
         WINS.textContent = driver.wins;
-        }
+    }
 
-        if (driverId) {
-            fetch(`/api/driver/${driverId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Driver not found');
-                    }
-                    return response.json();
-                })
-                .then(response => {
-                    populate(response);
-                })
-                .catch(error => {
-                    DRIVER_NAME.innerHTML = `<p>${error.message}</p>`;
-                });
-        } else {
-            DRIVER_NAME.innerHTML = `<p>No driver ID provided.</p>`;
+    function fillTable(response) {
+        for (const team of response) {
+            const teamDiv = document.createElement('tr');
+            teamDiv.innerHTML = `<tr><td>${team.name}</td> <td> <button onclick="window.location.href='/teamProfile.html?id=${team.constructorId}'" >profile</button> </td> </tr>`;
+            document.getElementById('teams').appendChild(teamDiv);
         }
+    }
+
+    if (driverId) {
+        fetch(`/api/driver/${driverId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Driver not found');
+                }
+                return response.json();
+            })
+            .then(response => {
+                populate(response);
+            })
+            .catch(error => {
+                DRIVER_NAME.innerHTML = `<p>${error.message}</p>`;
+            });
+
+        fetch(`/api/getTeamsForDriver/${driverId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Team not found');
+                }
+                return response.json();
+            })
+            .then(response => {
+                console.log(response);
+                fillTable(response);
+            })
+            .catch(error => {
+                DRIVER_NAME.innerHTML = `<p>${error.message}</p>`;
+            });
+    } else {
+        DRIVER_NAME.innerHTML = `<p>No driver ID provided.</p>`;
+    }
 });
