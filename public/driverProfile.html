@@ -1,78 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>F1 Driver Profiles</title>
-    <style>
-        body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-}
-
-header {
-    background: #333;
-    color: #fff;
-    padding: 10px 20px;
-    text-align: center;
-}
-
-main {
-    padding: 20px;
-}
-
-h1, h2 {
-    margin: 0 0 10px;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-ul li {
-    margin: 10px 0;
-}
-
-button {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-    </style>
+    <link rel="stylesheet" href="style.css">
     <script src="/js/driverDashboard.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
-    <header>
+    <header id="header">
+        <button onclick="window.location.href='/index.html'">Back</button>
         <h1>F1 Driver Profile</h1>
     </header>
     <main>
-
-        <section id="driver-profile" >
-            <h2 id="driver-name">Name: </h2>
-            <button id="addFavorite" onclick="addFavorite()">add to favorites</button>
+        <section id="driver-profile" class="card">
+            <h2 id="driver-name">Name:</h2>
+            <button id="addFavorite" onclick="addFavorite()">Add to Favorites</button>
             <p><strong>Date of Birth:</strong> <span id="driver-dob"></span></p>
             <p><strong>Driver Number:</strong> <span id="driver-number"></span></p>
             <p><strong>Reference Code:</strong> <span id="driver-reference"></span></p>
             <p><strong>Nationality:</strong> <span id="driver-nationality"></span></p>
             <p><strong>Teams Raced For:</strong> <span id="driver-teams"></span></p>
-            <p><strong>Races won:</strong> <span id="driver-wins"></span></p>
+            <p><strong>Races Won:</strong> <span id="driver-wins"></span></p>
 
-            <h2>Former and current teams:</h2>
+            <h2>Former and Current Teams</h2>
             <table id="teams">
-                <th>name</th>
-                <th>Profile</th>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Profile</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
+
+            <h2>Wins Over Time</h2>
+            <canvas id="winsChart"></canvas>
         </section>
     </main>
 </body>
+
 </html>

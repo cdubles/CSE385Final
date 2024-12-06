@@ -1,27 +1,16 @@
 const pool = require('../config/db.js');
 
-const getDriverStats = async (req, res) => {
-    console.log("getting driver stats");
-};
-
-const getTeamStats = async (req, res) => {
-    try {
-        const [results] = await pool.query('SELECT * FROM teams');
-        res.json(results);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching team stats' });
-    }
-};
-
 const getDriverById = async (req, res) => {
     try {
         const driverId = req.params.id;
         const [results] = await pool.query('SELECT * FROM drivers WHERE driverId = ?', [driverId]);
         const [winCount] = await pool.query('SELECT COUNT(*) as winCount FROM results WHERE driverId = ? AND `position` = 1',[driverId]);
+        const [winsData] = await pool.query('SELECT results.driverId, races.name,races.date FROM results LEFT JOIN races ON results.raceId = races.raceId WHERE results.driverId = ? AND results.`position` = 1;',[driverId]);
         if (results.length > 0) {
             const final = {
                 driver: results,
-                wins: winCount[0].winCount
+                wins: winCount[0].winCount,
+                winsData: winsData
             };
                 res.json(final);
         } else {
@@ -38,11 +27,14 @@ const getTeamById = async (req, res) => {
         const teamId = req.params.id;
         const [constructorDetails] = await pool.query('SELECT * FROM constructors WHERE constructorId = ?',[teamId]);
         const [winCount] = await pool.query('SELECT COUNT(*) as winCount FROM results WHERE constructorId = ? AND `position` = 1', [teamId]);
+        const [winsData] = await pool.query('SELECT results.driverId, races.name,races.date FROM results LEFT JOIN races ON results.raceId = races.raceId WHERE results.constructorId = ? AND results.`position` = 1;',[teamId]);
+
         if (constructorDetails.length > 0) {
              // Combine results
         const final = {
             constructor: constructorDetails,
-            wins: winCount[0].winCount
+            wins: winCount[0].winCount,
+            winsData: winsData
         };
             res.json(final);
 
@@ -112,33 +104,95 @@ const [results] = await pool.query(
 const addFavoriteDriver = async (req, res) => {
     const userId = req.user.idusers;
     const driverId = req.params.id;
-    const query = 'INSERT INTO favoriteDrivers (userId, driverId) VALUES (?, ?)';
+    
+    // Check if the combination already exists
+    const checkQuery = 'SELECT * FROM favoriteDrivers WHERE userId = ? AND driverId = ?';
     try {
+        const [existing] = await pool.query(checkQuery, [userId, driverId]);
+        if (existing.length > 0) {
+            return res.status(400).json({ error: 'This driver is already in your favorites' });
+        }
+
+        // If not, add the favorite driver
+        const query = 'INSERT INTO favoriteDrivers (userId, driverId) VALUES (?, ?)';
         const [results] = await pool.query(query, [userId, driverId]);
         console.log(results);
 
         res.status(201).json({message: 'Favorite added successfully',});
-
-        console.log("adding favorite driver............");
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Database query failed' });
     }
 };
+
 
 const addFavoriteTeam = async (req, res) => {
     const userId = req.user.idusers;
     const teamId = req.params.id;
-    const query = 'INSERT INTO favoriteTeams (userId, teamId) VALUES (?, ?)';
+
+    // Check if the combination already exists
+    const checkQuery = 'SELECT * FROM favoriteTeams WHERE userId = ? AND teamId = ?';
     try {
+        const [existing] = await pool.query(checkQuery, [userId, teamId]);
+        if (existing.length > 0) {
+            return res.status(400).json({ error: 'This team is already in your favorites' });
+        }
+
+        // If not, add the favorite team
+        const query = 'INSERT INTO favoriteTeams (userId, teamId) VALUES (?, ?)';
         const [results] = await pool.query(query, [userId, teamId]);
 
         res.status(201).json({message: 'Favorite added successfully',});
-        console.log("adding favorite team............");
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Database query failed' });
     }
 };
 
-module.exports = { getDriverStats, getTeamStats, getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver, addFavoriteDriver, addFavoriteTeam };
+
+const getFavoriteDrivers = async (req, res) => {
+    const userId = req.user.idusers;
+    const query = `
+        SELECT d.* 
+        FROM favoritedrivers fd
+        JOIN drivers d ON fd.driverId = d.driverId
+        WHERE fd.userId = ?;
+    `;
+    try {
+        const [results] = await pool.query(query, [userId]);
+        if (results.length > 0) {
+            res.status(200).json(results);
+        } else {
+            res.status(404).json({ message: 'No favorite drivers found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Database query failed' });
+    }
+};
+
+const getFavoriteTeams = async (req, res) => {
+    const userId = req.user.idusers;
+    const query = `
+        SELECT t.* 
+        FROM favoriteteams ft
+        JOIN constructors t ON ft.teamId = t.constructorId
+        WHERE ft.userId = ?;
+    `;
+    try {
+        const [results] = await pool.query(query, [userId]);
+        if (results.length > 0) {
+            res.status(200).json(results);
+        } else {
+            res.status(404).json({ message: 'No favorite teams found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Database query failed' });
+    }
+};
+
+
+
+
+module.exports = { getFavoriteTeams, getFavoriteDrivers, getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver, addFavoriteDriver, addFavoriteTeam };

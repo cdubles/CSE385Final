@@ -19,6 +19,63 @@ async function addFavorite() {
         });
 }
 
+function fillGraph(winsData) {
+    const ctx = document.getElementById('winsChart').getContext('2d');
+
+    const winsByYear = winsData.reduce((acc, race) => {
+        const year = new Date(race.date).getFullYear();
+        acc[year] = (acc[year] || 0) + 1;
+        return acc;
+    }, {});
+
+    // Transform into arrays for Chart.js
+    const years = Object.keys(winsByYear).map(year => parseInt(year));
+    const minYear = Math.min(...years);
+    const maxYear = Math.max(...years);
+
+    // Generate all years between minYear and maxYear and fill wins with 0 if no wins
+    const filledYears = Array.from({ length: maxYear - minYear + 1 }, (_, i) => minYear + i);
+    const filledWins = filledYears.map(year => winsByYear[year] || 0);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: filledYears,
+            datasets: [{
+                label: 'Wins Over Time',
+                data: filledWins,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Wins'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const NAME = document.getElementById('team-name');
     const NATION = document.getElementById('team-nation');
@@ -52,6 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => {
                 populate(response);
+                fillGraph(response.winsData);
             })
             .catch(error => {
                 NAME.innerHTML = `<p>${error.message}</p>`;
@@ -66,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => {
                 console.log(response);
-                fillTable(response)
+                fillTable(response);
             })
             .catch(error => {
                 NAME.innerHTML = `<p>${error.message}</p>`;
@@ -75,3 +133,4 @@ document.addEventListener('DOMContentLoaded', function () {
         NAME.innerHTML = `<p>No TEAM ID provided.</p>`;
     }
 });
+

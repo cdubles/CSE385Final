@@ -1,16 +1,20 @@
 const express = require('express');
-const { getDriverStats, getTeamStats, getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver,addFavoriteDriver,addFavoriteTeam } = require('../controllers/dataController');
+const {getFavoriteTeams, getFavoriteDrivers,getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver,addFavoriteDriver,addFavoriteTeam } = require('../controllers/dataController');
+const { ensureAuthenticated } = require('../controllers/authController');
 const router = express.Router();
 
-router.get('/drivers', getDriverStats);
-router.get('/teams', getTeamStats);
-router.get('/driver/:id', getDriverById);
-router.get('/team/:id', getTeamById);
-router.get('/getDriversForTeam/:id',getDriversForTeam);
-router.get('/SearchDrivers',SearchDrivers);
+router.get('/driver/:id', ensureAuthenticated,getDriverById);
+router.get('/team/:id', ensureAuthenticated,getTeamById);
+router.get('/getDriversForTeam/:id',ensureAuthenticated,getDriversForTeam);
+router.get('/SearchDrivers',ensureAuthenticated,SearchDrivers);
 router.get('/getTeamsForDriver/:id',getTeamsForDriver);
-router.post('/addFavoriteDriver/:id',addFavoriteDriver);
-router.post('/addFavoriteTeam/:id',addFavoriteTeam);
+
+router.post('/addFavoriteDriver/:id',ensureAuthenticated,addFavoriteDriver);
+router.post('/addFavoriteTeam/:id',ensureAuthenticated,addFavoriteTeam);
+
+router.get('/getFavoriteDrivers', ensureAuthenticated,getFavoriteDrivers);
+router.get('/getFavoriteTeams', ensureAuthenticated,getFavoriteTeams);
+
 router.get('/test', (req, res) => {
     console.log("Testing");
     res.send("Testing");

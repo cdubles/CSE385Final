@@ -7,22 +7,22 @@
     <title>F1 Dashboard</title>
 
     <link rel="stylesheet" href="style.css">
-    <script src="/js/home.js"></script>
+    <script src="/js/home.js" defer></script>
 </head>
 
 <body>
-    <div id="header">
+    <header id="header">
         <h1>F1 Dashboard</h1>
-        <input type="text" id="search-bar" placeholder="Search..." oninput="handleSearch()" />
-        <div id="search-results"></div>
-    </div>
+        <div id="search-container">
+            <input type="text" id="search-bar" placeholder="Search..." oninput="handleSearch()" />
+            <div id="search-results"></div>
+        </div>
+    </header>
 
-    <h1>F1 home</h1>
-    <button onclick="window.location.href='/driverProfile.html?id=1'">id 1</button>
-    <button onclick="window.location.href='/driverProfile.html?id=2'">id 2</button>
-    <button onclick="window.location.href='/driverProfile.html?id=3'">id 3</button>
-    <br>
-    <button onclick="window.location.href='/teamProfile.html?id=1'">team 1</button>
+    <main id="favorites-container">
+        <section id="favorite-drivers"> <h2>Favorite Drivers</h2> </section>
+        <section id="favorite-teams"> <h2>Favorite Teams</h2> </section>
+    </main>
 </body>
 
 </html>

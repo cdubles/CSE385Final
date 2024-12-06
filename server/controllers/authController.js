@@ -67,4 +67,11 @@ const loginUser = (req, res, next) => {
     })(req, res, next);
 };
 
-module.exports = { registerUser, loginUser, passport, session };
+const ensureAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.status(401).json({ error: 'Unauthorized' });
+};
+
+module.exports = { registerUser, loginUser, passport, session,ensureAuthenticated  };
