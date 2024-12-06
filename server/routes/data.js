@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDriverStats, getTeamStats, getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver } = require('../controllers/dataController');
+const { getDriverStats, getTeamStats, getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver,addFavoriteDriver,addFavoriteTeam } = require('../controllers/dataController');
 const router = express.Router();
 
 router.get('/drivers', getDriverStats);
@@ -9,6 +9,8 @@ router.get('/team/:id', getTeamById);
 router.get('/getDriversForTeam/:id',getDriversForTeam);
 router.get('/SearchDrivers',SearchDrivers);
 router.get('/getTeamsForDriver/:id',getTeamsForDriver);
+router.post('/addFavoriteDriver/:id',addFavoriteDriver);
+router.post('/addFavoriteTeam/:id',addFavoriteTeam);
 router.get('/test', (req, res) => {
     console.log("Testing");
     res.send("Testing");

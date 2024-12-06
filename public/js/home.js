@@ -16,11 +16,22 @@ async function handleSearch() {
       const results = await response.json();
       results.forEach((result) => {
         console.log(result);
+
         const resultBox = document.createElement('div');
         resultBox.className = 'search-result';
-        resultBox.textContent = result.forename + ' ' + result.surname;
+        
+        if(result.type == "Driver"){
+          resultBox.textContent = "Driver: " + result.forename + ' ' + result.surname;
         resultBox.onclick = () => {
-          window.location.href=`/driverProfile.html?id=${result.driverId}`;
+          window.location.href=`/driverProfile.html?id=${result.id}`;
+        }
+      };
+      if(result.type == "Team"){
+          resultBox.textContent = "Team: " + result.team_name;
+          resultBox.onclick = () => {
+            window.location.href=`/teamProfile.html?id=${result.id}`;
+          }
+
         };
       
     resultsContainer.appendChild(resultBox);

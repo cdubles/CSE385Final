@@ -1,9 +1,31 @@
+async function addFavorite() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const driverId = urlParams.get('id');
+
+    fetch(`/api/addFavoriteTeam/${driverId}`, {
+        method: 'POST'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Could not add driver to favorites');
+            }
+            return response.json();
+        })
+        .then(response => {
+            console.log(response);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const NAME = document.getElementById('team-name');
     const NATION = document.getElementById('team-nation');
     const WINS = document.getElementById('team-wins');
     const urlParams = new URLSearchParams(window.location.search);
     const teamId = urlParams.get('id');
+
 
     function populate(team) {
         console.log(team);

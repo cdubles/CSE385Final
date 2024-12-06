@@ -26,7 +26,7 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser((user, done) => {
-    done(null, user.idusers); // Use the correct key for the unique identifier
+    done(null, user.idusers);
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -42,7 +42,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 const registerUser = async (req, res) => {
-
+    console.log("register");
     const { username, password } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);

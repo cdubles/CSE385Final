@@ -99,7 +99,8 @@ const SearchDrivers = async (req, res) => {
   try {
     
 const [results] = await pool.query(
-    `SELECT * FROM drivers WHERE forename LIKE ? OR surname LIKE ? OR CONCAT(forename, ' ', surname) LIKE ? LIMIT 10;`,[`%${query}%`, `%${query}%`, `%${query}%`]
+    `SELECT * FROM (SELECT 'Driver' AS type, forename, surname, NULL AS team_name, driverId as id FROM drivers WHERE forename LIKE ? OR surname LIKE ? OR CONCAT(forename, ' ', surname) LIKE ? LIMIT 5) AS driver_results UNION SELECT * FROM (SELECT 'Team' AS type, NULL AS forename, NULL AS surname, name AS team_name, constructorId as id FROM constructors WHERE name LIKE ? LIMIT 5) AS team_results;
+`,[`%${query}%`, `%${query}%`, `%${query}%`,`%${query}%`]
   );
     res.json(results);
   } catch (error) {
@@ -107,4 +108,37 @@ const [results] = await pool.query(
     res.status(500).json({ error: 'Database query failed' });
   }
 }
-module.exports = { getDriverStats, getTeamStats, getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver };
+
+const addFavoriteDriver = async (req, res) => {
+    const userId = req.user.idusers;
+    const driverId = req.params.id;
+    const query = 'INSERT INTO favoriteDrivers (userId, driverId) VALUES (?, ?)';
+    try {
+        const [results] = await pool.query(query, [userId, driverId]);
+        console.log(results);
+
+        res.status(201).json({message: 'Favorite added successfully',});
+
+        console.log("adding favorite driver............");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Database query failed' });
+    }
+};
+
+const addFavoriteTeam = async (req, res) => {
+    const userId = req.user.idusers;
+    const teamId = req.params.id;
+    const query = 'INSERT INTO favoriteTeams (userId, teamId) VALUES (?, ?)';
+    try {
+        const [results] = await pool.query(query, [userId, teamId]);
+
+        res.status(201).json({message: 'Favorite added successfully',});
+        console.log("adding favorite team............");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Database query failed' });
+    }
+};
+
+module.exports = { getDriverStats, getTeamStats, getDriverById, getTeamById,getDriversForTeam, SearchDrivers,getTeamsForDriver, addFavoriteDriver, addFavoriteTeam };
