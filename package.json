@@ -4,7 +4,7 @@
   "description": "F1 Dashboard for databases final",
   "main": "index.js",
   "scripts": {
-    "run": "node ../server/index.js",
+    "run": "node ./server/index.js",
     "dev": "npx nodemon ./server/index.js"
   },
   "keywords": [],
